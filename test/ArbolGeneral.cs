@@ -3,29 +3,29 @@ using System.Collections.Generic;
 
 namespace DeepSpace
 {
-	public class ArbolGeneral<T>
+	class ArbolGeneral<Planeta>
 	{
 		
-		private T dato;
-		private List<ArbolGeneral<T>> hijos = new List<ArbolGeneral<T>>();
+		private Planeta dato;
+		private List<ArbolGeneral<Planeta>> hijos = new List<ArbolGeneral<Planeta>>();
 
-		public ArbolGeneral(T dato) {
+		public ArbolGeneral(Planeta dato) {
 			this.dato = dato;
 		}
 	
-		public T getDatoRaiz() {
+		public Planeta getDatoRaiz() {
 			return this.dato;
 		}
 	
-		public List<ArbolGeneral<T>> getHijos() {
+		public List<ArbolGeneral<Planeta>> getHijos() {
 			return hijos;
 		}
 	
-		public void agregarHijo(ArbolGeneral<T> hijo) {
+		public void agregarHijo(ArbolGeneral<Planeta> hijo) {
 			this.getHijos().Add(hijo);
 		}
 	
-		public void eliminarHijo(ArbolGeneral<T> hijo) {
+		public void eliminarHijo(ArbolGeneral<Planeta> hijo) {
 			this.getHijos().Remove(hijo);
 		}
 	
@@ -38,39 +38,21 @@ namespace DeepSpace
 		}
 	
 		
-		public int nivel(T dato) {
+		public int nivel(Planeta dato) {
 			return 0;
 		}
 		
-		public void porNivelesConSeparacion(){
-			Cola<ArbolGeneral<T>> c = new Cola<ArbolGeneral<T>>();
-			ArbolGeneral<T> arbolAux;
+		
+		
+		public void preorden(){
+			// primero procesamos raiz
+			Console.Write(this.dato.Poblacion() + " ");
 			
-			int nivel = 0;
-			
-			c.encolar(this);
-			c.encolar(null);
-			
-			Console.Write("Nivel " + nivel + ": ");
-			
-			while(!c.esVacia()){
-				arbolAux = c.desencolar();
-				
-				if(arbolAux == null){
-					if(!c.esVacia()){
-						nivel++;
-						Console.Write("\nNivel " + nivel + ": ");
-						c.encolar(null);
-					}						
-				}
-				else{
-					Console.Write(arbolAux.dato + " ");
-				
-					foreach(var hijo in arbolAux.hijos)
-						c.encolar(hijo);
-				}
-			}
+			// luego los hijos recursivamente
+			foreach(var hijo in this.hijos)
+				hijo.preorden();
 		}
-	
+		
+		
 	}
 }

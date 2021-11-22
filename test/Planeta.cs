@@ -106,6 +106,7 @@ namespace DeepSpace
         {
         	return (int) this.population;
         }
+        
     }
 }
 

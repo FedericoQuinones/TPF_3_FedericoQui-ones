@@ -1,4 +1,4 @@
-﻿
+﻿  
 using System;
 using System.Collections.Generic;
 namespace DeepSpace
@@ -7,8 +7,7 @@ namespace DeepSpace
 	class Estrategia
 	{
 		
-		
-		public String Consulta1( ArbolGeneral<Planeta> arbol)
+		public String Consulta1(ArbolGeneral<Planeta> arbol)
 		{
 			
 			Cola<ArbolGeneral<Planeta>> c = new Cola<ArbolGeneral<Planeta>>();
@@ -24,28 +23,38 @@ namespace DeepSpace
 			while(!c.esVacia()){
 				arbolAux = c.desencolar();	//aux es igual al ultimo nodo de la cola
 				
-				if(arbolAux == null){		//si el arbol auxiliar es null
-					if(!c.esVacia()){		//si la cola no esta vacia
-						nivel++;			//subir de nivel
-						//Console.Write("\nNivel " + nivel + ": ");	//imprimir el nivel
-						c.encolar(null);	//encola el null
-					}						
-				}
-				else{									//si ultimo nodo de la cola no es null
-					//Console.Write(arbolAux.dato + " "); //lo imprime
 				
-					foreach(ArbolGeneral<Planeta> hijo in arbolAux)
+				if(arbolAux == null){			//si el ultimo nodo es null
+					if(!c.esVacia()){			//si la cola no esta vacia
+							nivel++;			//subir de nivel
+							c.encolar(null);	//encola el null
+					}
+				}
+				
+				else{									//si ultimo nodo de la cola no es null
+					
+					
+					if(arbolAux.getDatoRaiz().EsPlanetaDeLaIA())
+						break;
+					
+					foreach(ArbolGeneral<Planeta> hijo in arbolAux.getHijos())
 					{
 						c.encolar(hijo);
 					}
 				}
 			}
+			return ("El planeta del bot (azul) se encuentra a una distancia de "+ nivel+ " planetas del planeta raiz");
 		}
 
-
+		
+		
 		public String Consulta2( ArbolGeneral<Planeta> arbol)
 		{
-			return "Implementar";
+			
+			arbol.getDatoRaiz().Poblacion();
+			
+			
+			return "xd";
 		}
 
 
@@ -60,5 +69,19 @@ namespace DeepSpace
 			
 			return null;
 		}
+		
+		
+		public void preorden(ArbolGeneral<Planeta> arbol)
+		{
+			// primero procesamos raiz
+			
+			Console.Write(arbol.getDatoRaiz().Poblacion() + " ");
+			
+			// luego los hijos recursivamente
+			foreach(ArbolGeneral<Planeta> hijo in arbol.getHijos())
+				preorden(hijo);
+		}
+		
+		
 	}
 }
