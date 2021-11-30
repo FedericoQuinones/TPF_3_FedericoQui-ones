@@ -24,8 +24,41 @@ namespace DeepSpace
 			return this.datos[0]; 
 		}
 		
-			public bool esVacia() {
-				return this.datos.Count == 0;
-			}
+		public T dos() {
+			return this.datos[1]; 
 		}
+		
+		public T menosdos() {
+			return this.datos[datos.Count-2]; 
+		}
+		
+		public T ultimo() {
+			return this.datos[datos.Count-1]; 
+		}
+		
+		public bool esVacia() {
+			return this.datos.Count == 0;
+		}
+		
+		public void vaciar(){
+			datos.Clear();
+		}
+		
+		public int total(){
+			return datos.Count;
+		}
+		
+		public T desapilar() {
+			T temp = this.datos[datos.Count-1];
+			this.datos.RemoveAt(datos.Count-1);
+			return temp;
+		}
+		
+		public T getDato(int x){
+			return this.datos[x-1];
+		}
+		
+		
+	}
+	
 }

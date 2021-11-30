@@ -33,8 +33,17 @@ namespace DeepSpace
 			return this.getHijos().Count == 0;
 		}
 	
-		public int altura() {
-			return 0;
+		public int altura() {			
+			if(this.esHoja())
+				return 0;
+			else{
+				int maxAltura = 0;
+				foreach(var hijo in this.hijos)
+					if(hijo.altura() > maxAltura)
+						maxAltura = hijo.altura();
+				
+				return maxAltura + 1;
+			}
 		}
 	
 		
@@ -43,7 +52,7 @@ namespace DeepSpace
 		}
 		
 		
-		
+		/*
 		public void preorden(){
 			// primero procesamos raiz
 			Console.Write(this.dato.Poblacion() + " ");
@@ -53,6 +62,6 @@ namespace DeepSpace
 				hijo.preorden();
 		}
 		
-		
+		*/
 	}
 }

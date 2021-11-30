@@ -111,7 +111,6 @@
     <Compile Include="juego\Text.cs" />
     <Compile Include="juego\WinLooseChecker.cs" />
     <Compile Include="juego\WinScene.cs" />
-    <Compile Include="Recorrido.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
