@@ -24,18 +24,6 @@ namespace DeepSpace
 			return this.datos[0]; 
 		}
 		
-		public T dos() {
-			return this.datos[1]; 
-		}
-		
-		public T menosdos() {
-			return this.datos[datos.Count-2]; 
-		}
-		
-		public T ultimo() {
-			return this.datos[datos.Count-1]; 
-		}
-		
 		public bool esVacia() {
 			return this.datos.Count == 0;
 		}
@@ -57,6 +45,12 @@ namespace DeepSpace
 		public T getDato(int x){
 			return this.datos[x-1];
 		}
+		
+		public T ultimo(){
+			return this.datos[datos.Count-1];
+		}
+		
+		
 		
 		
 	}

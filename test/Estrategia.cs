@@ -3,13 +3,12 @@ using System;
 using System.Collections.Generic;
 namespace DeepSpace
 {
-	
 	class Estrategia
 	{
-		private ArbolGeneral<Planeta> IA,JUG,nPrev=null;
-		private Cola<ArbolGeneral<Planeta>> mejorCaminoAUX;
-		private Cola<Movimiento> MovRefuer;
-		private int idxIA=1;
+		private ArbolGeneral<Planeta> IA,JUG,LCA;
+		private Cola<ArbolGeneral<Planeta>>  mejCam;
+		private bool mc=false;
+		private int idxIA, o=0;
 		
 		public String Consulta1(ArbolGeneral<Planeta> arbol)
 		{
@@ -99,6 +98,7 @@ namespace DeepSpace
 		
 		public String Consulta3( ArbolGeneral<Planeta> arbol)
 		{
+			/*
 			Cola<ArbolGeneral<Planeta>> c = new Cola<ArbolGeneral<Planeta>>();
 			ArbolGeneral<Planeta> arbolAux;
 			
@@ -135,30 +135,31 @@ namespace DeepSpace
 				}
 			}
 			return ("\n\n"+resultado);
-		}
+			*/
 			
-		public Movimiento CalcularMovimiento(ArbolGeneral<Planeta> arbol)
-		{
+			
 			Cola<ArbolGeneral<Planeta>> caminoBOT = new Cola<ArbolGeneral<Planeta>>();
 			Cola<ArbolGeneral<Planeta>> caminoJugador = new Cola<ArbolGeneral<Planeta>>();
 			Cola<ArbolGeneral<Planeta>> mejorCamino = new Cola<ArbolGeneral<Planeta>>();
+			//ArbolGeneral<Planeta> LCA=IA;
+			int idxRef=1, x=0, idxBOT,idxJUG, i1=0;
+			string y="", w="";
 			
-			Movimiento m;
 			
 			//busqueda camino de la raiz hasta la IA
-			if(arbol.getDatoRaiz().EsPlanetaDeLaIA()){ IA=arbol; caminoBOT.encolar(arbol);}
+			if(arbol.getDatoRaiz().EsPlanetaDeLaIA()){ caminoBOT.encolar(arbol);}
 			else
 			{
 				foreach(ArbolGeneral<Planeta> hijo in arbol.getHijos())
 				{
-					if(hijo.getDatoRaiz().EsPlanetaDeLaIA()){ IA=hijo; caminoBOT.encolar(arbol); caminoBOT.encolar(hijo); break;}
+					if(hijo.getDatoRaiz().EsPlanetaDeLaIA()){ caminoBOT.encolar(arbol); caminoBOT.encolar(hijo);  break;}
 					else
 					{
 						foreach(ArbolGeneral<Planeta> nieto in hijo.getHijos())
 						{
-							if(nieto.getDatoRaiz().EsPlanetaDeLaIA()){ IA=nieto; caminoBOT.encolar(arbol); caminoBOT.encolar(hijo); caminoBOT.encolar(nieto); break;}
+							if(nieto.getDatoRaiz().EsPlanetaDeLaIA()){ caminoBOT.encolar(arbol); caminoBOT.encolar(hijo); caminoBOT.encolar(nieto); break;}
 							else
-								if(nieto.getHijos()[0].getDatoRaiz().EsPlanetaDeLaIA()){ IA=nieto.getHijos()[0]; caminoBOT.encolar(arbol); caminoBOT.encolar(hijo); caminoBOT.encolar(nieto); caminoBOT.encolar(nieto.getHijos()[0]); break;}
+								if(nieto.getHijos()[0].getDatoRaiz().EsPlanetaDeLaIA()){ caminoBOT.encolar(arbol); caminoBOT.encolar(hijo); caminoBOT.encolar(nieto); caminoBOT.encolar(nieto.getHijos()[0]); break;}
 						}
 					}
 				}
@@ -183,94 +184,195 @@ namespace DeepSpace
 					}
 				}
 			}
-			if(caminoBOT.total()>=2 && caminoJugador.total()>=2)
+			
+			i1=1;
+			
+			while(i1<caminoBOT.total())
 			{
-				while(caminoBOT.dos()==caminoJugador.menosdos())
+				if(caminoBOT.getDato(i1).getDatoRaiz()==caminoJugador.getDato(i1).getDatoRaiz())
 				{
-					caminoBOT.desencolar();
-					caminoJugador.desencolar();
-					
-					if(caminoBOT.total()<=2 && caminoJugador.total()<=2) //fix bug si solo hay IA y JUG y no neutral (se encola solo [2 (IA), 5 (JUG)])
-						break;
+					LCA=caminoBOT.getDato(i1);
+					i1++;
 				}
+				else
+					break;
 			}
 			
-			if(caminoBOT.tope() == caminoJugador.tope())
+			y+="lda: "+ i1 + "valor lda"+ LCA.getDatoRaiz().Poblacion() + "\n";
+			
+			
+			
+			
+			
+			
+			while(caminoBOT.tope()==LCA)
 				caminoBOT.desencolar();
-				
+			
+			while(caminoJugador.tope()==LCA)
+				caminoJugador.desencolar();
+			
+			
+			
 			while(!caminoBOT.esVacia())
+			{
 				mejorCamino.encolar(caminoBOT.desapilar());
+			}
+			
+			mejorCamino.encolar(LCA);
 			
 			while(!caminoJugador.esVacia())
+			{
 				mejorCamino.encolar(caminoJugador.desencolar());
-			
-			
-			m=new Movimiento(arbol.getDatoRaiz(), arbol.getDatoRaiz());
-			
-			/*
-	refu:
-			if(Refuerza==true)
-			{
-				iGlobal++;
-				while(iGlobal <= idxRefuerzo)
-				{
-					return new Movimiento(mejorCamino.getDato(iGlobal).getDatoRaiz(), mejorCamino.getDato(iGlobal+1).getDatoRaiz());
-				}
-				
 			}
 			
+			for(int i=1; i<=mejorCamino.total(); i++)
+				y+=" "+ mejorCamino.getDato(i).getDatoRaiz().Poblacion();
 			
-			if(mejorCamino.getDato(idxIA+1).getDatoRaiz().EsPlanetaDeLaIA()==false)
-			{
-				if( mejorCamino.getDato(idxIA+1).getDatoRaiz().Poblacion()>mejorCamino.getDato(idxIA).getDatoRaiz().Poblacion()/2 )
-				{
-					//refuerza
-					Refuerza=true;
-					idxRefuerzo=idxIA;
-					goto refu;
-					
-				}
-				else //ataca  si es mas grande
-				{
-					return new Movimiento(mejorCamino.getDato(idxIA).getDatoRaiz(), mejorCamino.getDato(idxIA+1).getDatoRaiz());
-				}
-			}
-			else
-			{
-				iGlobal=0;
-				idxRefuerzo=0;
-				idxIA++;
-			}
-			*/
 			
-			if(mejorCamino.getDato(idxIA+1).getDatoRaiz().EsPlanetaDeLaIA()==false)
-			{
-				if( mejorCamino.getDato(idxIA+1).getDatoRaiz().Poblacion()> mejorCamino.getDato(idxIA).getDatoRaiz().Poblacion()/2 )
+			return y;
+			
+			
+			
+			
+			
+			
+			
+		}
+			
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		public Movimiento CalcularMovimiento(ArbolGeneral<Planeta> arbol)
+		{
+			
+			Cola<ArbolGeneral<Planeta>> caminoBOT = new Cola<ArbolGeneral<Planeta>>();
+			Cola<ArbolGeneral<Planeta>> caminoJugador = new Cola<ArbolGeneral<Planeta>>();
+			Cola<ArbolGeneral<Planeta>> mejorCamino = new Cola<ArbolGeneral<Planeta>>();
+			int idxRef=1, x=0, idxBOT,idxJUG, i1=1, i2=1;
+			
+			if(mc==false){
+				//busqueda camino de la raiz hasta la IA
+				if(arbol.getDatoRaiz().EsPlanetaDeLaIA()){ IA=arbol; caminoBOT.encolar(arbol);}
+				else
 				{
-					//refuerza
-					for(int i=1; i>=idxIA-1; i++)
+					foreach(ArbolGeneral<Planeta> hijo in arbol.getHijos())
 					{
-						m=new Movimiento(mejorCamino.getDato(i).getDatoRaiz(), mejorCamino.getDato(i++).getDatoRaiz());
-						MovRefuer.encolar(m);
+						if(hijo.getDatoRaiz().EsPlanetaDeLaIA()){ IA=hijo; caminoBOT.encolar(arbol); caminoBOT.encolar(hijo); break;}
+						else
+						{
+							foreach(ArbolGeneral<Planeta> nieto in hijo.getHijos())
+							{
+								if(nieto.getDatoRaiz().EsPlanetaDeLaIA()){ IA=nieto; caminoBOT.encolar(arbol); caminoBOT.encolar(hijo); caminoBOT.encolar(nieto); break;}
+								else
+									if(nieto.getHijos()[0].getDatoRaiz().EsPlanetaDeLaIA()){ IA=nieto.getHijos()[0]; caminoBOT.encolar(arbol); caminoBOT.encolar(hijo); caminoBOT.encolar(nieto); caminoBOT.encolar(nieto.getHijos()[0]); break;}
+							}
+						}
 					}
 				}
-				else //ataca  si es mas grande
+				
+				//busqueda camino de la raiz hasta el jugador
+				
+				if(arbol.getDatoRaiz().EsPlanetaDelJugador()){ caminoJugador.encolar(arbol);}
+				else
 				{
-					return new Movimiento(mejorCamino.getDato(idxIA).getDatoRaiz(), mejorCamino.getDato(idxIA+1).getDatoRaiz());
+					foreach(ArbolGeneral<Planeta> hijo in arbol.getHijos())
+					{
+						if(hijo.getDatoRaiz().EsPlanetaDelJugador()){ caminoJugador.encolar(arbol) ; caminoJugador.encolar(hijo); break;}
+						else
+						{
+							foreach(ArbolGeneral<Planeta> nieto in hijo.getHijos())
+							{
+								if(nieto.getDatoRaiz().EsPlanetaDelJugador()){ caminoJugador.encolar(arbol); caminoJugador.encolar(hijo); caminoJugador.encolar(nieto); break;}
+								else
+									if(nieto.getHijos()[0].getDatoRaiz().EsPlanetaDelJugador()){ caminoJugador.encolar(arbol); caminoJugador.encolar(hijo); caminoJugador.encolar(nieto); caminoJugador.encolar(nieto.getHijos()[0]); break;}
+							}
+						}
+					}
 				}
+				
+				
+				while(i1<caminoBOT.total())
+				{
+					if(caminoBOT.getDato(i1).getDatoRaiz()==caminoJugador.getDato(i1).getDatoRaiz())
+					{
+						LCA=caminoBOT.getDato(i1);
+						i1++;
+					}
+					else
+						break;
+				}
+				
+				while(caminoBOT.tope()==LCA)
+					caminoBOT.desencolar();
+				
+				while(caminoJugador.tope()==LCA)
+					caminoJugador.desencolar();
+				
+				
+				while(!caminoBOT.esVacia())
+				{
+					mejorCamino.encolar(caminoBOT.desapilar());
+				}
+				
+				mejorCamino.encolar(LCA);
+				
+				while(!caminoJugador.esVacia())
+				{
+					mejorCamino.encolar(caminoJugador.desencolar());
+				}
+			}
+			if(mc==false)
+			{
+				mc=true;
+				mejCam=mejorCamino;
+			}
+			
+			for(int i=1; i<=mejCam.total(); i++)
+			{
+				if(mejCam.getDato(i).getDatoRaiz().EsPlanetaDeLaIA())
+					idxIA=i;
+			}
+			
+			for(int i=1; i<idxIA; i++)
+			{
+				if(mejCam.getDato(i).getDatoRaiz().Poblacion() > x)
+				{
+					x=mejCam.getDato(i).getDatoRaiz().Poblacion();
+					idxRef=i;
+				}
+			}
+			
+			
+			if( (mejCam.getDato(idxIA).getDatoRaiz().Poblacion()/2)> mejCam.getDato(idxIA+1).getDatoRaiz().Poblacion() ) //ataca  si es mas grande
+			{
+				return new Movimiento(mejCam.getDato(idxIA).getDatoRaiz(), mejCam.getDato(idxIA+1).getDatoRaiz());
 			}
 			else
 			{
-				idxIA++;
+				return new Movimiento(mejCam.getDato(idxRef).getDatoRaiz(), mejCam.getDato(idxRef+1).getDatoRaiz());
 			}
 			
-			while(!MovRefuer.esVacia())
-			{
-				m=MovRefuer.desencolar();
-				return m;
-			}
-				
-			return (m);
 		}
 	}
 }
